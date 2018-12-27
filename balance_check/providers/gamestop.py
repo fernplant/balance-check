@@ -91,7 +91,7 @@ class GameStop(BalanceCheckProvider):
         logger.info("Success! Card balance: {}".format(avail_balance))
 
         return ({
-            "available": avail_balance
+            "balance": avail_balance
         })
 
     def check_balance(self, **kwargs):
