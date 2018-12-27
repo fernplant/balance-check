@@ -19,7 +19,6 @@ class GameStop(BalanceCheckProvider):
             "User-Agent": config.USER_AGENT
         })
 
-        fields["X-Requested-With"] = "XMLHttpRequest"
 
         logger.info("Fetching balance check page")
 
