@@ -11,7 +11,7 @@ class GameStop(BalanceCheckProvider):
         super().__init__()
 
         self.website_url = "https://www.gamestop.com/profiles/valuelookup.aspx"
-        self.schema = GiftCardSchema([Merchant.GameStop])
+        self.schema = GiftCardSchema(Merchant.GameStop)
 
     def scrape(self, fields):
         session = requests.Session()
