@@ -86,7 +86,6 @@ class GameStop(BalanceCheckProvider):
                 avail_balance = '-1' 
             else:
                 print('ERROR finding balance on page')
-                raise
 
 
         logger.info("Success! Card balance: {}".format(avail_balance))
