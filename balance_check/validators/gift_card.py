@@ -1,6 +1,5 @@
 import re
 from enum import Enum
-from luhn import verify
 
 
 class Merchant(Enum):
@@ -10,11 +9,6 @@ class Merchant(Enum):
 merchant_regex = {
     Merchant.GameStop: re.compile('636491[0-9]{13}')
 }
-
-
-def luhn_check(field, value, error):
-    if not verify(value):
-        error(field, "does not pass Luhn check")
 
 
 def GiftCardSchema(merchants):
@@ -30,8 +24,7 @@ def GiftCardSchema(merchants):
             "type": "string",
             "empty": False,
             "validator": [
-                issuer_check,
-                luhn_check
+                issuer_check
             ]
         },
         "pin": {
