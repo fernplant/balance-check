@@ -12,7 +12,7 @@ merchant_regex = {
 
 
 def GiftCardSchema(merchants):
-    def issuer_check(field, value, error):
+    def merchant_check(field, value, error):
         if not any(merchant_regex[merchant].match(value) for merchant in merchants):
             error(field, "invalid card number for merchant(s): {}".format(
                 ", ".join([merchant.value for merchant in merchants])
