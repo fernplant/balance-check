@@ -19,7 +19,6 @@ class GameStop(BalanceCheckProvider):
             "User-Agent": config.USER_AGENT
         })
 
-
         logger.info("Fetching balance check page")
 
         resp = session.get(self.website_url)
