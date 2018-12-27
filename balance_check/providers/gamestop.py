@@ -25,7 +25,6 @@ class GameStop(BalanceCheckProvider):
         resp = session.get(self.website_url)
         if resp.status_code != 200:
             raise RuntimeError("Failed to GET website (status code {})".format(resp.status_code))
-            sys.exit(1)
 
         page_html = BeautifulSoup(resp.content, features="html.parser")
         form = page_html.find("form")
