@@ -73,7 +73,7 @@ class GameStop(BalanceCheckProvider):
 
         form_resp = session.post(endpoint, data=fields)
         if form_resp.status_code != 200:
-            logger.critical("Failed to retrieve card balance (status code {})".format(form_resp.status_code))
+            raise RuntimeError("Failed to retrieve card balance (status code {})".format(form_resp.status_code))
 
         balance_html = BeautifulSoup(form_resp.content, features="html.parser")
 
