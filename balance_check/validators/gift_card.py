@@ -7,7 +7,7 @@ class Merchant(Enum):
 
 
 merchant_regex = {
-    Merchant.GameStop: re.compile('636491[0-9]{13}')
+    Merchant.GameStop: re.compile('^636491[0-9]{13}$')
 }
 
 
