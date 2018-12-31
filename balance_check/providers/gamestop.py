@@ -22,14 +22,14 @@ class GameStop(BalanceCheckProvider):
 
         resp = session.get(self.website_url)
         if resp.status_code != 200:
-            raise RuntimeError("Failed to GET website (status code {})".format(resp.status_code))
+            raise RuntimeError(f"Failed to GET website (status code {resp.status_code}")
 
         page_html = BeautifulSoup(resp.content, features="html.parser")
         form = page_html.find("form")
         if not form:
             raise RuntimeError("Unable to find balance check form")
 
-        endpoint = "{}{}".format(self.website_url, form['action'])
+        endpoint = f"{self.website_url}{form['action']}"
 
         # These fields are present on GS balance check page, does not work without including them
         fields['__EVENTTARGET'] = ''
@@ -48,7 +48,7 @@ class GameStop(BalanceCheckProvider):
 
         captcha_resp = captcha_solver.solve_recaptcha(self.website_url, site_key)
         if captcha_resp["errorId"] != 0:
-            raise RuntimeError("Unable to solve reCAPTCHA ({})".format(captcha_resp["errorDescription"]))
+            raise RuntimeError(f"Unable to solve reCAPTCHA ({captcha_resp['errorDescription']})")
 
         fields["g-recaptcha-response"] = captcha_resp["solution"]["gRecaptchaResponse"]
 
@@ -60,7 +60,7 @@ class GameStop(BalanceCheckProvider):
 
         form_resp = session.post(endpoint, data=fields)
         if form_resp.status_code != 200:
-            raise RuntimeError("Failed to retrieve card balance (status code {})".format(form_resp.status_code))
+            raise RuntimeError(f"Failed to retrieve card balance (status code {form_resp.status_code})")
 
         balance_html = BeautifulSoup(form_resp.content, features="html.parser")
 
@@ -79,7 +79,7 @@ class GameStop(BalanceCheckProvider):
             else:
                 raise RuntimeError('Could not find balance on retrieved page for unknown reason')
 
-        logger.info("Success! Card balance: {}".format(avail_balance))
+        logger.info(f"Success! Card balance: {avail_balance}")
 
         return ({
             "balance": avail_balance
@@ -89,10 +89,7 @@ class GameStop(BalanceCheckProvider):
         if self.validate(kwargs):
             # Keep trying to get result if CAPTCHA solver gives incorrect answer
             while True:
-                logger.info("Checking balance for card: {}, pin {}".format(
-                    kwargs["card_number"],
-                    kwargs["pin"]
-                ))
+                logger.info(f"Checking balance for card: {kwargs['card_number']}, pin {kwargs['pin']}")
 
                 form_ids = {
                     "ctl00$ctl00$BaseContentPlaceHolder$mainContentPlaceHolder$CardNumberTextBox": kwargs["card_number"],
