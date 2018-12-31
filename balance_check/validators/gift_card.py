@@ -7,16 +7,14 @@ class Merchant(Enum):
 
 
 merchant_regex = {
-    Merchant.GameStop: re.compile('636491[0-9]{13}')
+    Merchant.GameStop: re.compile('^636491[0-9]{13}$')
 }
 
 
-def GiftCardSchema(merchants):
-    def issuer_check(field, value, error):
-        if not any(merchant_regex[merchant].match(value) for merchant in merchants):
-            error(field, "invalid card number for merchant(s): {}".format(
-                ", ".join([merchant.value for merchant in merchants])
-            ))
+def GiftCardSchema(merchant):
+    def merchant_check(field, value, error):
+        if not merchant_regex[merchant].match(value):
+            error(field, "invalid card number for merchant: {}".format(merchant))
 
     return {
         "card_number": {
@@ -24,7 +22,7 @@ def GiftCardSchema(merchants):
             "type": "string",
             "empty": False,
             "validator": [
-                issuer_check
+                merchant_check
             ]
         },
         "pin": {
