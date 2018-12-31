@@ -1,4 +1,3 @@
-import sys
 import requests
 from bs4 import BeautifulSoup
 from balance_check import logger, captcha_solver, config
