@@ -28,7 +28,7 @@ class GameStop(BalanceCheckProvider):
         page_html = BeautifulSoup(resp.content, features="html.parser")
         form = page_html.find("form")
         if not form:
-            logger.critical("Unable to find balance check form")
+            raise RuntimeError("Unable to find balance check form")
             sys.exit(1)
 
         endpoint = "{}{}".format(self.website_url, form['action'])
