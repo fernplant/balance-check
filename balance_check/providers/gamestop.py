@@ -29,7 +29,6 @@ class GameStop(BalanceCheckProvider):
         form = page_html.find("form")
         if not form:
             raise RuntimeError("Unable to find balance check form")
-            sys.exit(1)
 
         endpoint = "{}{}".format(self.website_url, form['action'])
 
