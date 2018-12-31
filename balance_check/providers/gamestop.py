@@ -50,7 +50,6 @@ class GameStop(BalanceCheckProvider):
         captcha_resp = captcha_solver.solve_recaptcha(self.website_url, site_key)
         if captcha_resp["errorId"] != 0:
             raise RuntimeError("Unable to solve reCAPTCHA ({})".format(captcha_resp["errorDescription"]))
-            sys.exit(1)
 
         fields["g-recaptcha-response"] = captcha_resp["solution"]["gRecaptchaResponse"]
 
