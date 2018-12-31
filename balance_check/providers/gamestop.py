@@ -79,7 +79,6 @@ class GameStop(BalanceCheckProvider):
             else:
                 raise RuntimeError('Could not find balance on retrieved page for unknown reason')
 
-
         logger.info("Success! Card balance: {}".format(avail_balance))
 
         return ({
