@@ -22,7 +22,7 @@ def GiftCardSchema(merchant):
             "type": "string",
             "empty": False,
             "validator": [
-                issuer_check
+                merchant_check
             ]
         },
         "pin": {
