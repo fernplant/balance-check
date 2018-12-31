@@ -41,7 +41,7 @@ class GameStop(BalanceCheckProvider):
 
         recaptcha_field = page_html.find("div", class_="g-recaptcha")
         if not recaptcha_field:
-            logger.critical("Unable to find reCAPTCHA")
+            raise RuntimeError("Unable to find reCAPTCHA")
             sys.exit(1)
 
         site_key = recaptcha_field["data-sitekey"]
