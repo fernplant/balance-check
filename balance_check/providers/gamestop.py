@@ -74,8 +74,7 @@ class GameStop(BalanceCheckProvider):
             elif balance_html.find('span',id='BaseContentPlaceHolder_mainContentPlaceHolder_recaptchaMessage'):
                 # Message on screen: "The code you entered is invalid."
                 # CAPTCHA answer invalid, retry
-                logger.warning('Invalid CAPTCHA answer supplied! Trying again...')
-                return 'CAPTCHA_ERROR'
+                raise RuntimeError('Invalid CAPTCHA answer supplied! Trying again...')
             else:
                 raise RuntimeError('Could not find balance on retrieved page for unknown reason')
 
@@ -87,18 +86,13 @@ class GameStop(BalanceCheckProvider):
 
     def check_balance(self, **kwargs):
         if self.validate(kwargs):
-            # Keep trying to get result if CAPTCHA solver gives incorrect answer
-            while True:
-                logger.info(f"Checking balance for card: {kwargs['card_number']}, pin {kwargs['pin']}")
+            logger.info(f"Checking balance for card: {kwargs['card_number']}, pin {kwargs['pin']}")
 
-                form_inputs = {
-                    "ctl00$ctl00$BaseContentPlaceHolder$mainContentPlaceHolder$CardNumberTextBox": kwargs["card_number"],
-                    "ctl00$ctl00$BaseContentPlaceHolder$mainContentPlaceHolder$PinTextBox": kwargs["pin"]
-                }
+            form_inputs = {
+                "ctl00$ctl00$BaseContentPlaceHolder$mainContentPlaceHolder$CardNumberTextBox": kwargs["card_number"],
+                "ctl00$ctl00$BaseContentPlaceHolder$mainContentPlaceHolder$PinTextBox": kwargs["pin"]
+            }
 
-                result = self.scrape(form_inputs)
-                if result != 'CAPTCHA_ERROR':
-                    return result
-                # Else, try again
+            return self.scrape(form_inputs)
         #else:
             # Invalid
