@@ -69,10 +69,7 @@ https://stevenmirabito.com/kudos""".format(
     args = parser.parse_args()
 
     in_filename = path.abspath(args.input)
-    out_filename = in_filename
-    if args.output:
-        # Separate output path specified
-        out_filename = path.abspath(args.output)
+    out_filename = in_filename if not args.output else path.abspath(args.output)
 
     if args.provider not in providers:
         logger.fatal("Unknown provider: '{}'".format(args.provider))
@@ -96,6 +93,8 @@ https://stevenmirabito.com/kudos""".format(
                     # Schedule balance check
                     future = executor.submit(provider.check_balance, **row)
                     futures[future] = idx
+            # Done reading input file and scheduling tasks
+            logger.info(f"Read {len(futures)} from file '{in_filename}'")
         except (OSError, IOError) as err:
             logger.fatal("Unable to open input file '{}': {}".format(in_filename, err))
             sys.exit(1)
