@@ -11,6 +11,7 @@ class GameStop(BalanceCheckProvider):
 
         self.website_url = "https://www.gamestop.com/profiles/valuelookup.aspx"
         self.schema = GiftCardSchema(Merchant.GameStop)
+        self.max_workers = 1  # For some reason does not work properly multithreaded
 
     def scrape(self, fields):
         session = requests.Session()
@@ -79,12 +80,9 @@ class GameStop(BalanceCheckProvider):
             # Set these as -1 to notate they gave invalid error but are likely actually zero balance
             if balance_html.find(text="The Gift Card number entered is invalid."):
                 avail_balance = "-1"
-            elif balance_html.find(
-                "span",
-                id="BaseContentPlaceHolder_mainContentPlaceHolder_recaptchaMessage",
-            ):
-                # Message on screen: "The code you entered is invalid."
-                # CAPTCHA answer invalid, retry
+            elif balance_html.find(text="The PIN number entered is invalid."):
+                raise RuntimeError("Invalid PIN")
+            elif balance_html.find(text="The code you entered is invalid."):
                 raise RuntimeError("Invalid CAPTCHA answer supplied")
             else:
                 raise RuntimeError(
