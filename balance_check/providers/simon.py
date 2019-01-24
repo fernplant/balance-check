@@ -46,36 +46,33 @@ class Simon(BalanceCheckProvider):
         fields["__EVENTTARGET"] = ""
         fields["__EVENTARGUMENT"] = ""
         fields["__LASTFOCUS"] = ""
-        fields["__VIEWSTATE"] = page_html.find("input", id="__VIEWSTATE")[
-            "value"
-        ]
+        fields["__VIEWSTATE"] = page_html.find("input", id="__VIEWSTATE")["value"]
         fields["__VIEWSTATEGENERATOR"] = page_html.find(
             "input", id="__VIEWSTATEGENERATOR"
         )["value"]
         fields["__VIEWSTATEENCRYPTED"] = ""
-        fields["__EVENTVALIDATION"] = page_html.find(
-            "input", id="__EVENTVALIDATION"
-        )["value"]
+        fields["__EVENTVALIDATION"] = page_html.find("input", id="__EVENTVALIDATION")[
+            "value"
+        ]
         fields["ctl00$ctl00$header1$EmailLogin"] = ""
         fields["ctl00$ctl00$header1$PasswordLogin"] = ""
         fields[
             "ctl00$ctl00$FullContent$MainContent$checkBalanceSubmit"
         ] = "CHECK YOUR BALANCE"
 
-        fields["g-recaptcha-response"] = captcha["solution"][
-            "gRecaptchaResponse"
-        ]
+        fields["g-recaptcha-response"] = captcha["solution"]["gRecaptchaResponse"]
 
         session.headers.update(
             {
-                "Accept": "*/*",
+                "User-Agent": config.USER_AGENT,
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
                 "Accept-Encoding": "gzip, deflate, br",
                 "Accept-Language": "en-US,en;q=0.9",
                 "Cache-Control": "no-cache",
                 "Connection": "keep-alive",
                 "Content-Type": "application/x-www-form-urlencoded",
                 "Referer": self.website_url,
-                # "X-Requested-With": "XMLHttpRequest",
+                "origin": "https://www.simon.com",
             }
         )
 
@@ -89,36 +86,30 @@ class Simon(BalanceCheckProvider):
 
         balance_html = BeautifulSoup(form_resp.content, features="html.parser")
 
-        # TODO handle bad captcha result
+        if balance_html.find("label", text="CAPTCHA: Please validate"):
+            raise RuntimeError("Invalid CAPTCHA answer supplied.")
 
         try:
             avail_balance = balance_html.find(
                 id="ctl00_ctl00_FullContent_MainContent_lblBalance"
-            )
-            initial_balance = balance_html.find_all("td", _class="tblinfo")[
-                -1
-            ].text.strip()
+            ).text
+            initial_balance = balance_html.find_all(
+                "td", _class="tblinfo"
+            )  # [-1].text.strip()
+            print(initial_balance)
         except:
-            print(
-                "Failed to get balance info from page. Dumping page contents:",
-                form_resp.content,
-            )
-            raise
+            print("DUMP:", resp.text)
+            raise RuntimeError("Could not find balance on page")
 
         logger.info(f"Success! Card balance: {avail_balance}")
 
-        return {
-            "initial_balance": initial_balance,
-            "available_balance": avail_balance,
-        }
+        return {"initial_balance": initial_balance, "available_balance": avail_balance}
 
     def check_balance(self, **kwargs):
         if self.validate(kwargs):
             logger.info(
                 "Checking balance for card: {}, exp {}/{}".format(
-                    kwargs["card_number"],
-                    kwargs["exp_month"],
-                    kwargs["exp_year"],
+                    kwargs["card_number"], kwargs["exp_month"], kwargs["exp_year"]
                 )
             )
 
@@ -127,9 +118,7 @@ class Simon(BalanceCheckProvider):
                     "ctl00$ctl00$FullContent$MainContent$tbNumber": kwargs[
                         "card_number"
                     ],
-                    "ctl00$ctl00$FullContent$MainContent$tbExpDate": kwargs[
-                        "exp_month"
-                    ]
+                    "ctl00$ctl00$FullContent$MainContent$tbExpDate": kwargs["exp_month"]
                     + kwargs["exp_year"],
                     "ctl00$ctl00$FullContent$MainContent$tbCid": kwargs["cvv"],
                 }

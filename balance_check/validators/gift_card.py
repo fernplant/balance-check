@@ -8,6 +8,7 @@ class Merchant(Enum):
     HomeDepot = "The Home Depot"
     Nike = "Nike"
     Southwest = "Southwest Airlines"
+    GuitarCenter = "Guitar Center"
 
 
 merchant_regex = {
@@ -19,6 +20,7 @@ merchant_regex = {
     Merchant.Nike: re.compile("^606010[0-9]{13}"),
     # Merchant.Lowes: TODO
     Merchant.HomeDepot: re.compile("^98061[0-9]{18}"),
+    Merchant.GuitarCenter: re.compile("^61(53|64)[0-9]{12}"),
 }
 
 

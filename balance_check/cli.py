@@ -117,7 +117,7 @@ https://stevenmirabito.com/kudos""",
                 idx = futures.pop(future)
 
                 try:
-                    balances_info = future.result()
+                    balance_info = future.result()
                 except Exception as e:
                     # Log the first column value as an ID (usually card number)
                     card_id = next(iter(results[idx].values()))
