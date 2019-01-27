@@ -124,24 +124,26 @@ https://stevenmirabito.com/kudos""",
 
                     # Attempt to schedule retry
                     if idx in retries:
-                        retries[idx] += 1
+                        # Out of retries?
                         if retries[idx] > config.RETRY_TIMES:
-                            # Out of retries, permanent failure
                             logger.error(
                                 f"Failed to balance check {card_id} (out of retries). Last error: {e}"
                             )
                     else:
-                        executor.submit(
-                            logger.error, "error occurred", exc_info=sys.exc_info()
-                        )
+                        # First retry
                         retries[idx] = 1
-                        logger.warning(
-                            "RETRY {}/{}: Failed to balance check {}, will retry later. Error: {}".format(
-                                retries[idx], config.RETRY_TIMES, card_id, e
-                            )
+
+                    # explicit error report
+                    # executor.submit(logger.error, "error occurred", exc_info=sys.exc_info())
+                    logger.warning(
+                        "RETRY {}/{}: Failed to balance check {}, will retry later. Error: {}".format(
+                            retries[idx], config.RETRY_TIMES, card_id, e
                         )
-                        future = executor.submit(provider.check_balance, **results[idx])
-                        futures[future] = idx
+                    )
+                    # Schedule the retry and increase retry counter
+                    future = executor.submit(provider.check_balance, **results[idx])
+                    futures[future] = idx
+                    retries[idx] += 1
 
                 else:  # Successful balance(s) returned
                     # !! NEEDS WORK, UNFINISHED
