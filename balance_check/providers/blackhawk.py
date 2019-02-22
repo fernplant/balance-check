@@ -24,9 +24,7 @@ class Blackhawk(BalanceCheckProvider):
         resp = session.get(self.website_url)
         if resp.status_code != 200:
             logger.critical(
-                "Failed to GET Blackhawk website (status code {})".format(
-                    resp.status_code
-                )
+                f"Failed to GET Blackhawk website (status code {resp.status_code})"
             )
             sys.exit(1)
 
