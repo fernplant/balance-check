@@ -59,12 +59,6 @@ class GameStop(BalanceCheckProvider):
 
         logger.info("Fetching card balance")
 
-        session.headers.update(
-            {
-                # Not necessary for this merchant
-            }
-        )
-
         form_resp = session.post(endpoint, data=fields)
         if form_resp.status_code != 200:
             raise RuntimeError(

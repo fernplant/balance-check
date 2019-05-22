@@ -34,7 +34,9 @@ def GiftCardSchema(merchant):
             "required": True,
             "type": "string",
             "empty": False,
-            "validator": [merchant_check],
+            "validator": [
+                merchant_check
+            ]
         },
         "pin": {
             "required": True,
